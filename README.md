@@ -26,7 +26,7 @@ composer require jackwrfuller/drush-user-list
 Since this package is considered a Drupal module, you may need to enable the module as well:
 
 ```bash
-drush pm:install drush-user-list
+drush pm:install drush_user_list
 ```
 
 ## :thought_balloon: Usage
