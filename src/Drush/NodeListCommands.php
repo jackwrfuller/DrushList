@@ -3,23 +3,24 @@
 namespace Drupal\drush_user_list\Drush;
 
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
+use Drupal;
 use Drupal\node\Entity\Node;
-use Drupal\user\Entity\User;
 use Drush\Attributes as CLI;
+use Drush\Utils\StringUtils;
 
-class NodeListCommands extends AbstractListCommands
+final class NodeListCommands extends AbstractListCommands
 {
 
     /**
      * List all Drupal users.
      */
     #[CLI\Command(name: 'node:list', aliases: ['nl'])]
-    //#[CLI\Argument(name: 'arg1', description: 'Argument description.')]
-        //#[CLI\Option(name: 'option-name', description: 'Option description')]
+    #[CLI\Argument(name: 'nodeTypes', description: 'A comma delimited list of node types')]
+    //#[CLI\Option(name: 'option-name', description: 'Option description')]
     #[CLI\Usage(name: 'node:list', description: 'List of nodes')]
 //    #[CLI\Usage(name: 'node:list --fields=uid', description: 'List of the user IDs')]
 //    #[CLI\Usage(name: 'node:list --fields=username', description: 'List of the usernames')]
-    #[CLI\FieldLabels(labels:[
+    #[CLI\FieldLabels(labels: [
         'nid' => 'Node ID',
         'vid' => 'Version ID',
         'type' => 'Node type',
@@ -27,11 +28,31 @@ class NodeListCommands extends AbstractListCommands
         'langcode' => 'Language'
     ])]
     #[CLI\DefaultTableFields(fields: ['nid', 'vid', 'type', 'uuid', 'langcode'])]
-    public function nodeList(): RowsOfFields {
-        $query = \Drupal::entityQuery('node');
+    public function nodeList(string $nodeTypes = null): RowsOfFields
+    {
+        $nodeTypeArray = StringUtils::csvToArray($nodeTypes);
+        $arrayOfNodes = $this->getAllNodesOfTypes($nodeTypeArray);
+        $rows = $this->createPrintableMatrix($arrayOfNodes);
+        return new RowsOfFields($rows);
+    }
+
+    private function getAllNodesOfTypes(array $nodeTypeArray): array {
+        $query = Drupal::entityQuery('node');
         $query->accessCheck(false)->sort('nid', 'ASC');
-        //$query->condition('type', 'webform');
-        $arrayOfNodes = $query->execute();
+        if ($nodeTypeArray === []) {
+            return $query->execute();
+        }
+        // Show only selected node types.
+        $orGroup = $query->orConditionGroup();
+        foreach ($nodeTypeArray as $type) {
+            assert(is_string($type));
+            $orGroup->condition('type', $type);
+        }
+        $query->condition($orGroup);
+        return $query->execute();
+    }
+
+    private function createPrintableMatrix(array $arrayOfNodes): array {
         $rows = [];
         foreach ($arrayOfNodes as $nid) {
             $node = Node::load($nid);
@@ -40,6 +61,8 @@ class NodeListCommands extends AbstractListCommands
                     'uuid' => $node->get('uuid')->getString(), 'langcode' => $node->get('langcode')->getString()];
             }
         }
-        return new RowsOfFields($rows);
+        return $rows;
     }
+
+
 }
