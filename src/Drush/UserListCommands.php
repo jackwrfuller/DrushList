@@ -11,6 +11,8 @@ use Drupal\user\Entity\User;
 
 /**
  * Adds a command to list all users in a Drupal site.
+ *
+ * Jack WR Fuller
  */
 final class UserListCommands extends DrushCommands {
 
