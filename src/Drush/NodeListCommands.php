@@ -3,7 +3,6 @@
 namespace Drupal\drush_user_list\Drush;
 
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
-use Drupal;
 use Drupal\node\Entity\Node;
 use Drush\Attributes as CLI;
 use Drush\Utils\StringUtils;
@@ -40,7 +39,7 @@ final class NodeListCommands extends AbstractListCommands
 
     private function getAllNodesOfTypes(array $nodeTypeArray): array
     {
-        $query = Drupal::entityQuery('node');
+        $query = \Drupal::entityQuery('node');
         $query->accessCheck(false)->sort('nid');
         // Skip or-conditioning if no arguments provided.
         if ($nodeTypeArray === []) {
