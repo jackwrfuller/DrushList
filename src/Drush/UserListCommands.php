@@ -19,8 +19,6 @@ final class UserListCommands extends AbstractListCommands {
      * List all Drupal users.
      */
     #[CLI\Command(name: 'user:list', aliases: ['ul'])]
-    //#[CLI\Argument(name: 'arg1', description: 'Argument description.')]
-        //#[CLI\Option(name: 'option-name', description: 'Option description')]
     #[CLI\Usage(name: 'user:list', description: 'List of the users with their user ID and username')]
     #[CLI\Usage(name: 'user:list --fields=uid', description: 'List of the user IDs')]
     #[CLI\Usage(name: 'user:list --fields=username', description: 'List of the usernames')]

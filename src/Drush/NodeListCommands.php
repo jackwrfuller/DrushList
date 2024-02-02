@@ -10,16 +10,15 @@ use Drush\Utils\StringUtils;
 
 final class NodeListCommands extends AbstractListCommands
 {
+    private const LIST = 'node:list';
+
 
     /**
-     * List all Drupal users.
+     * List all nodes of one of the listed types. By default, show all nodes.
      */
-    #[CLI\Command(name: 'node:list', aliases: ['nl'])]
+    #[CLI\Command(name: self::LIST, aliases: ['nl', 'node-list'])]
     #[CLI\Argument(name: 'nodeTypes', description: 'A comma delimited list of node types')]
-    //#[CLI\Option(name: 'option-name', description: 'Option description')]
-    #[CLI\Usage(name: 'node:list', description: 'List of nodes')]
-//    #[CLI\Usage(name: 'node:list --fields=uid', description: 'List of the user IDs')]
-//    #[CLI\Usage(name: 'node:list --fields=username', description: 'List of the usernames')]
+    #[CLI\Usage(name: 'drush node:list [nodeTypes]', description: 'List all nodes')]
     #[CLI\FieldLabels(labels: [
         'nid' => 'Node ID',
         'vid' => 'Version ID',
@@ -38,7 +37,8 @@ final class NodeListCommands extends AbstractListCommands
 
     private function getAllNodesOfTypes(array $nodeTypeArray): array {
         $query = Drupal::entityQuery('node');
-        $query->accessCheck(false)->sort('nid', 'ASC');
+        $query->accessCheck(false)->sort('nid');
+        // Skip or-conditioning if no arguments provided.
         if ($nodeTypeArray === []) {
             return $query->execute();
         }
@@ -55,14 +55,25 @@ final class NodeListCommands extends AbstractListCommands
     private function createPrintableMatrix(array $arrayOfNodes): array {
         $rows = [];
         foreach ($arrayOfNodes as $nid) {
-            $node = Node::load($nid);
-            if ($node !== null) {
-                $rows[] = ['nid' => $nid, 'vid' => $node->id(), 'type' => $node->get('type')->getString(),
-                    'uuid' => $node->get('uuid')->getString(), 'langcode' => $node->get('langcode')->getString()];
-            }
+            $this->addRow($rows, $nid);
         }
         return $rows;
     }
+
+    private function addRow(array& $rows, $nodeId): void {
+        $node = Node::load($nodeId);
+        if ($node === null) {
+            $this->logger()->warning("Unable to load node {$nodeId}");
+            return;
+        }
+        $keys = array_keys($node->toArray());
+        $row = [];
+        foreach ($keys as $key) {
+            $row[$key] = $node->get($key)->getString();
+        }
+        $rows[] = $row;
+    }
+
 
 
 }
