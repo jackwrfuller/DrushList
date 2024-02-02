@@ -27,6 +27,7 @@ abstract class AbstractListCommands extends DrushCommands
     {
         $rows = [];
         foreach ($arrayOfIds as $id) {
+            // TODO refactor - it seems like a code smell, since we cant enforce that the entity type string will refer to a class that implement EntityInterface, which is where load() is defined.
             $entity = $entityType::load($id);
             if ($entity === null) {
                 $this->logger()->warning("Unable to load entity {$id}");
