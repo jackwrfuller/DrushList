@@ -3,26 +3,10 @@
 namespace Drupal\drush_user_list\Drush;
 
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Utility\Token;
 use Drush\Commands\DrushCommands;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractListCommands extends DrushCommands
 {
-    /**
-     * Constructs an UserListCommands object.
-     */
-    public function __construct(private readonly Token $token) {
-        parent::__construct();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container) {
-        return new static($container->get('token'));
-    }
-
     protected function createPrintableMatrix(string $entityType, array $arrayOfIds): array
     {
         $rows = [];
