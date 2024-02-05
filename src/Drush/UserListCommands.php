@@ -49,7 +49,7 @@ final class UserListCommands extends AbstractListCommands {
     public function userList(): RowsOfFields
     {
         $arrayOfIds = $this->getUserIds();
-        $rowsOfUsers = $this->createPrintableMatrix(User::class, $arrayOfIds);
+        $rowsOfUsers = $this->createArrayOfRows(User::class, $arrayOfIds);
         return new RowsOfFields($rowsOfUsers);
     }
 

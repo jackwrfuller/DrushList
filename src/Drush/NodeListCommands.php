@@ -33,7 +33,7 @@ final class NodeListCommands extends AbstractListCommands
     {
         $nodeTypeArray = StringUtils::csvToArray($nodeTypes);
         $arrayOfNodes = $this->getAllNodesOfTypes($nodeTypeArray);
-        $rows = $this->createPrintableMatrix(Node::class, $arrayOfNodes);
+        $rows = $this->createArrayOfRows(Node::class, $arrayOfNodes);
         return new RowsOfFields($rows);
     }
 

@@ -7,11 +7,13 @@ use Drush\Commands\DrushCommands;
 
 abstract class AbstractListCommands extends DrushCommands
 {
-    protected function createPrintableMatrix(string $entityType, array $arrayOfIds): array
+    protected function createArrayOfRows(string $entityType, array $arrayOfIds): array
     {
         $rows = [];
         foreach ($arrayOfIds as $id) {
-            // TODO refactor - it seems like a code smell, since we cant enforce that the entity type string will refer to a class that implement EntityStorageInterface, which is where load() is defined.
+            // TODO refactor - it seems like a code smell, since we cant enforce
+            //  that the entity type string will refer to a class that implement
+            //  EntityStorageInterface, which is where load() is defined.
             $entity = $entityType::load($id);
             if ($entity === null) {
                 $this->logger()->warning("Unable to load entity {$id}");

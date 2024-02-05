@@ -12,6 +12,8 @@
       "name": "Jack Fuller",
       "email": "jack.fuller101@gmail.com"
     }
-  ]
+  ],
+  "require-dev": {
+    "drupal/core": "^10.2"
+  }
 }
-
