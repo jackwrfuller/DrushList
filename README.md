@@ -1,4 +1,4 @@
-# Drush User List
+# Drush List
 
 ### A Simple extension of Drush
 
