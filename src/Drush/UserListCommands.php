@@ -3,58 +3,61 @@
 namespace Drupal\drush_user_list\Drush;
 
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
-use Drupal\Core\Utility\Token;
-use Drush\Attributes as CLI;
-use Drush\Commands\DrushCommands;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\user\Entity\User;
+use Drush\Attributes as CLI;
 
 /**
  * Adds a command to list all users in a Drupal site.
+ *
+ * Jack WR Fuller
  */
-final class UserListCommands extends DrushCommands {
+final class UserListCommands extends AbstractListCommands {
 
-    /**
-     * Constructs an UserListCommands object.
-     */
-    public function __construct(
-        private readonly Token $token,
-    ) {
-        parent::__construct();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container) {
-        return new static($container->get('token'));
-    }
+    const LABELS = [
+        'uid' => 'User ID',
+        'name' => 'User name',
+        'pass' => 'Password',
+        'mail' => 'User mail',
+        'theme' => 'User theme',
+        'signature' => 'Signature',
+        'signature_format' => 'Signature format',
+        'user_created' => 'User created',
+        'created' => 'Created',
+        'user_access' => 'User last access',
+        'access' => 'Last access',
+        'user_login' => 'User last login',
+        'login' => 'Last login',
+        'user_status' => 'User status',
+        'status' => 'Status',
+        'timezone' => 'Time zone',
+        'picture' => 'User picture',
+        'init' => 'Initial user mail',
+        'roles' => 'User roles',
+        'group_audience' => 'Group Audience',
+        'langcode' => 'Language code',
+        'uuid' => 'Uuid',
+    ];
+    const DEFAULT_FIELDS = ['uid', 'name', 'mail', 'roles', 'user_status'];
 
     /**
      * List all Drupal users.
      */
     #[CLI\Command(name: 'user:list', aliases: ['ul'])]
-    //#[CLI\Argument(name: 'arg1', description: 'Argument description.')]
-        //#[CLI\Option(name: 'option-name', description: 'Option description')]
-    #[CLI\Usage(name: 'user:list', description: 'List of the users with their user ID and username')]
-    #[CLI\Usage(name: 'user:list --fields=uid', description: 'List of the user IDs')]
-    #[CLI\Usage(name: 'user:list --fields=username', description: 'List of the usernames')]
-    #[CLI\FieldLabels(labels:[
-        'uid' => 'User ID',
-        'username' => 'Username'
-    ])]
-    #[CLI\DefaultTableFields(fields: ['uid', 'username'])]
-    public function listAllUsers(): RowsOfFields {
-        $query = \Drupal::entityQuery('user');
-        $query->accessCheck(False)->sort('uid', 'ASC');
-        $arrayOfUids = $query->execute();
-        foreach ($arrayOfUids as $uid) {
-            $account = User::load($uid);
-            $rows[] = ['uid' => $uid,
-                'username' => $account->getDisplayName()];
+    #[CLI\Usage(name: 'drush user:list', description: 'List of the users with their user ID and username')]
+    #[CLI\FieldLabels(labels: self::LABELS)]
+    #[CLI\DefaultTableFields(fields: self::DEFAULT_FIELDS)]
+    public function userList(): RowsOfFields
+    {
+        $arrayOfIds = $this->getUserIds();
+        $rowsOfUsers = $this->createPrintableMatrix(User::class, $arrayOfIds);
+        return new RowsOfFields($rowsOfUsers);
+    }
 
-        }
-        return new RowsOfFields($rows);
+    private function getUserIds(): array
+    {
+        $query = \Drupal::entityQuery('user');
+        $query->accessCheck(false)->sort('uid');
+        return $query->execute();
     }
 
 }
