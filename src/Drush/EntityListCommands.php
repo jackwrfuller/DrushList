@@ -32,9 +32,14 @@ final class EntityListCommands extends AbstractListCommands
         return new static($container->get('entity_field.manager'));
     }
 
-    #[CLI\Command(name: 'entity:list')]
+    /**
+     *  List all fieldable entities.
+     */
+    #[CLI\Command(name: 'entity:list', aliases: ['el', 'entity-list'])]
     #[CLI\Argument(name: 'entityType', description: 'entity type to display')]
     #[CLI\Option(name: 'nfields', description: 'The number of fields to display, default is 8.')]
+    #[CLI\Usage(name: 'drush entity:list', description: 'Lists all available and fieldable entities.')]
+    #[CLI\Usage(name: 'drush entity:list entity_type', description: 'Lists all fieldable entities of the specified type.')]
     public function entityList(string $entityType = null, $options = ['nfields' => self::MAX_COLUMNS]): void
     {
         if ($entityType === null)
@@ -51,7 +56,7 @@ final class EntityListCommands extends AbstractListCommands
         if (!is_subclass_of($this->entityTypeClass, 'Drupal\Core\Entity\FieldableEntityInterface')) {
             throw new \Exception(dt("The specified entity type '!entity' is not a fieldable entity.", ['!entity' => $entityType]));
         }
-        $this->renderEntityFields($entityType);
+        $this->renderEntitiesOfType($entityType);
     }
 
     private function renderEntityTypeList(): void {
@@ -65,7 +70,7 @@ final class EntityListCommands extends AbstractListCommands
         $table->render();
     }
 
-    private function renderEntityFields(string $entityType): void {
+    private function renderEntitiesOfType(string $entityType): void {
         $query = \Drupal::entityQuery($entityType);
         $query->accessCheck(false)->sort($this->entityTypeID);
         $arrayOfIds = $query->execute();

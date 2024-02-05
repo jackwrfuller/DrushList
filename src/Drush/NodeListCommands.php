@@ -33,6 +33,10 @@ final class NodeListCommands extends AbstractListCommands
     {
         $nodeTypeArray = StringUtils::csvToArray($nodeTypes);
         $arrayOfNodes = $this->getAllNodesOfTypes($nodeTypeArray);
+        if ($arrayOfNodes === []) {
+            $this->output->writeln("None were found!");
+            return new RowsOfFields([]);
+        }
         $rows = $this->createArrayOfRows(Node::class, $arrayOfNodes);
         return new RowsOfFields($rows);
     }
