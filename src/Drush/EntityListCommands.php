@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Drupal\drush_user_list\Drush;
+namespace Drupal\drush_list\Drush;
 
 use Consolidation\OutputFormatters\FormatterManager;
 use Consolidation\OutputFormatters\Options\FormatterOptions;

@@ -1,0 +1,4 @@
+name: 'Drush List'
+type: module
+description: "Extends Drush with commands to list various entities"
+core_version_requirement: ^10

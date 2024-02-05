@@ -1,10 +1,11 @@
 {
-  "name": "jackwrfuller/drush-user-list",
-  "description": "Extends Drush's 'user' command with user:list that list all existing users",
+  "name": "jackwrfuller/drush-list",
+  "description": "Extends Drush with commands to list various entities",
   "type": "drupal-module",
   "require": {
     "php": ">=8.0",
-    "drush/drush": ">=11.0"
+    "drush/drush": ">=12.0",
+    "drupal/core": ">=10.0"
   },
   "license": "MIT",
   "authors": [
@@ -12,8 +13,5 @@
       "name": "Jack Fuller",
       "email": "jack.fuller101@gmail.com"
     }
-  ],
-  "require-dev": {
-    "drupal/core": "^10.2"
-  }
+  ]
 }

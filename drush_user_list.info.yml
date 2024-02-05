@@ -1,4 +1,0 @@
-name: 'Drush User List'
-type: module
-description: "Extends Drush's 'user' command with user:list that list all existing users"
-core_version_requirement: ^10

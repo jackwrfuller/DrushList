@@ -1,8 +1,14 @@
 # Drush User List
 
-### A Simple extension of the 'drush user' command
+### A Simple extension of Drush
 
-Extends the capability of Drush's 'user' command to include the ability to list all users, in the same way you can list all views or roles with 'drush views:list' and 'drush roles:list', respecitively.
+This module augments Drush's command set to include the ability to list various entities.
+
+A task that I found was not as simple as it should be in Drush was listing entities, i.e
+list all users, list all nodes, list all webforms, etc. 
+
+While this can be done with SQL queries, Drush provided similar functionality for other commands.
+For example, `drush role:list` or `drush views:list`. 
 
 ## :book: Contents
 
@@ -16,20 +22,34 @@ Extends the capability of Drush's 'user' command to include the ability to list 
 
 - PHP >=8.0.0
 - Drush >=12.0.0
+- Drupal >= 10.0.0
 
 ## :building_construction: Installation
 
 ```bash
-composer require jackwrfuller/drush-user-list
+composer require jackwrfuller/drush-list
 ```
 
-Since this package is considered a Drupal module, you may need to enable the module as well:
+Since this package is considered a Drupal module, you need to enable the module as well:
 
 ```bash
-drush pm:install drush_user_list
+drush pm:install drush_list
 ```
 
 ## :thought_balloon: Usage
+
+```bash
+drush entity:list
+```
+
+Returns a list of all fieldable object types
+
+```bash
+drush entity:list webform
+```
+
+Returns a list of all webforms. 
+
 
 ```bash
 drush user:list
@@ -43,6 +63,12 @@ drush user:list --field=uid
 ```
 
 to get just a list of user IDs.
+
+```bash
+drush node:list [...node_type]
+```
+
+Display a list of all nodes, optionally filtering by node types.
 
 ---
 ## :page_with_curl: License
